@@ -1,0 +1,3 @@
+[submodule "ArduinoOSC"]
+	path = ArduinoOSC
+	url = https://github.com/hideakitai/ArduinoOSC.git
