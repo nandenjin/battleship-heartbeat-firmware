@@ -216,6 +216,10 @@ void loop() {
     Serial.printf("%d %d %d\n", vals[p], range, range_short);
   }
 
+  if (floor(lastTick / 3000) != floor(now / 3000)) {
+    OscWiFi.send(HOST, PORT, "/setup", 0);
+  }
+
   lastTick = now;
   OscWiFi.update();
 }
