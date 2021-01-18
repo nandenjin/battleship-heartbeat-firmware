@@ -187,6 +187,10 @@ void loop() {
     if (vals[p] < thr && vals[p - 1 >= 0 ? (p - 1) : (p - 1 + BUFFER_LEN)] >= thr) {
       tone(BZ, 1760 * 2, 50);
     }
+
+    if (floor(lastTick / 1000) != floor(now / 1000)) {
+      OscWiFi.send(HOST, PORT, "/hr", (int)(pulse != 0 ? 60 * 1000 / pulse : -1));
+    }
   } else if (mode == 2) {
     if (lastPulse < now - 5000 || range_short < 300) {
       blink(now, 200, 400);
