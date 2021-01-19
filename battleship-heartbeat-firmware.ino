@@ -85,10 +85,10 @@ void setup() {
 
   attachInterrupt(ENTER, enter_push, RISING);
   attachInterrupt(ENTER, enter, FALLING);
-  attachInterrupt(UP, up, FALLING);
-  attachInterrupt(DOWN, down, FALLING);
-  attachInterrupt(LEFT, left, FALLING);
-  attachInterrupt(RIGHT, right, FALLING);
+  attachInterrupt(UP, up, RISING);
+  attachInterrupt(DOWN, down, RISING);
+  attachInterrupt(LEFT, left, RISING);
+  attachInterrupt(RIGHT, right, RISING);
 
   WiFi.begin(SSID, NET_PW);
   while (WiFi.status() != WL_CONNECTED)
