@@ -184,7 +184,9 @@ void loop() {
     lastPulse = now;
   }
 
-  if (mode == 1) {
+  if (mode == 0) {
+    digitalWrite(LED, HIGH);
+  } else if (mode == 1) {
     if (vals[p - 1 >= 0 ? (p - 1) : (p - 1 + BUFFER_LEN)] >= thr) {
       if(vals[p] < thr) {
         tone(BZ, 1760 * 2, 50);
