@@ -16,6 +16,7 @@
 #define OPR_LEFT (1 << 2)
 #define OPR_RIGHT (1 << 3)
 #define OPR_ENTER (1 << 4)
+#define OPR_ENTER_LONG (1 << 5)
 
 #define BUFFER_LEN 50
 #define UPDATE_INTERVAL 50
@@ -26,6 +27,7 @@ unsigned long lastOpr = 0;
 
 unsigned long lastPulse = 0;
 unsigned long lastTick = 0;
+unsigned long lastEnterPushed = 0;
 
 int8_t mode = 0;
 int8_t prevMode = 0;
@@ -37,8 +39,11 @@ unsigned long ts[BUFFER_LEN];
 unsigned long tmpT, prevT, pulse;
 long pulseTs[10];
 
+void ICACHE_RAM_ATTR enter_push() {
+  lastEnterPushed = millis();
+}
 void ICACHE_RAM_ATTR enter() {
-  opr |= OPR_ENTER;
+  opr |= lastEnterPushed > millis() - 500 ? OPR_ENTER : OPR_ENTER_LONG;
 }
 void ICACHE_RAM_ATTR left() {
   opr |= OPR_LEFT;
@@ -78,11 +83,12 @@ void setup() {
   pinMode(LED, OUTPUT);
   pinMode(BZ, OUTPUT);
 
-  attachInterrupt(ENTER, enter, RISING);
-  attachInterrupt(UP, up, RISING);
-  attachInterrupt(DOWN, down, RISING);
-  attachInterrupt(LEFT, left, RISING);
-  attachInterrupt(RIGHT, right, RISING);
+  attachInterrupt(ENTER, enter_push, RISING);
+  attachInterrupt(ENTER, enter, FALLING);
+  attachInterrupt(UP, up, FALLING);
+  attachInterrupt(DOWN, down, FALLING);
+  attachInterrupt(LEFT, left, FALLING);
+  attachInterrupt(RIGHT, right, FALLING);
 
   WiFi.begin(SSID, NET_PW);
   while (WiFi.status() != WL_CONNECTED)
@@ -209,7 +215,11 @@ void loop() {
   }
 
   if (opr > 0 && now - lastOpr > 150) {
-    tone(BZ, 1760, 50);
+    if (opr & OPR_ENTER_LONG) {
+      tone(BZ, 3520, 500);
+    } else {
+      tone(BZ, 3520, 50);
+    }
     OscWiFi.send(HOST, PORT, "/opr", (int32_t)opr);
     lastOpr = now;
   }
