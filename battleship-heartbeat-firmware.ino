@@ -27,7 +27,7 @@ unsigned long lastOpr = 0;
 
 unsigned long lastPulse = 0;
 unsigned long lastTick = 0;
-unsigned long lastEnterPushed = 0;
+volatile unsigned long lastEnterPushed = 0;
 
 int8_t mode = 0;
 int8_t prevMode = 0;
@@ -39,11 +39,13 @@ unsigned long ts[BUFFER_LEN];
 unsigned long tmpT, prevT, pulse;
 long pulseTs[10];
 
-void ICACHE_RAM_ATTR enter_push() {
-  lastEnterPushed = millis();
-}
 void ICACHE_RAM_ATTR enter() {
-  opr |= lastEnterPushed > millis() - 500 ? OPR_ENTER : OPR_ENTER_LONG;
+  if (lastEnterPushed == 0) {
+    lastEnterPushed = millis();
+  } else {
+    opr |= (lastEnterPushed > millis() - 300) ? OPR_ENTER : OPR_ENTER_LONG;
+    lastEnterPushed = 0;
+  }
 }
 void ICACHE_RAM_ATTR left() {
   opr |= OPR_LEFT;
@@ -83,8 +85,7 @@ void setup() {
   pinMode(LED, OUTPUT);
   pinMode(BZ, OUTPUT);
 
-  attachInterrupt(ENTER, enter_push, RISING);
-  attachInterrupt(ENTER, enter, FALLING);
+  attachInterrupt(ENTER, enter, CHANGE);
   attachInterrupt(UP, up, RISING);
   attachInterrupt(DOWN, down, RISING);
   attachInterrupt(LEFT, left, RISING);
@@ -223,6 +224,7 @@ void loop() {
   if (opr > 0 && now - lastOpr > 150) {
     if (opr & OPR_ENTER_LONG) {
       tone(BZ, 3520, 500);
+
     } else {
       tone(BZ, 3520, 50);
     }
