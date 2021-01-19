@@ -185,13 +185,13 @@ void loop() {
   }
 
   if (mode == 1) {
-    if (pulse != 0) {
-      blink(now, 100, pulse);
-    } else {
+    if (vals[p - 1 >= 0 ? (p - 1) : (p - 1 + BUFFER_LEN)] >= thr) {
+      if(vals[p] < thr) {
+        tone(BZ, 1760 * 2, 50);
+      }
       digitalWrite(LED, HIGH);
-    }
-    if (vals[p] < thr && vals[p - 1 >= 0 ? (p - 1) : (p - 1 + BUFFER_LEN)] >= thr) {
-      tone(BZ, 1760 * 2, 50);
+    } else {
+      digitalWrite(LED, LOW);
     }
 
     if (floor(lastTick / 1000) != floor(now / 1000)) {
