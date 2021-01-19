@@ -202,10 +202,14 @@ void loop() {
       blink(now, 200, 400);
       beep(now, 880 * 4, 100, 2000, 0);
       beep(now, 880 * 1, 100, 2000, 300);
-    }
 
-    if (floor(lastTick / 1000) != floor(now / 1000)) {
-      OscWiFi.send(HOST, PORT, "/hr", (int)(pulse != 0 ? 60 * 1000 / pulse : -1));
+      if (floor(lastTick / 1000) != floor(now / 1000)) {
+        OscWiFi.send(HOST, PORT, "/hr_invalid");
+      }
+    } else {
+      if (floor(lastTick / 1000) != floor(now / 1000)) {
+        OscWiFi.send(HOST, PORT, "/hr", (int)(pulse != 0 ? 60 * 1000 / pulse : -1));
+      }
     }
   }
 
