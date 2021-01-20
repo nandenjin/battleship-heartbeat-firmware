@@ -209,11 +209,9 @@ void loop() {
       if (floor(lastTick / 1000) != floor(now / 1000)) {
         OscWiFi.send(HOST, PORT, "/hr_invalid");
       }
-    } else {
-      if (floor(lastTick / 1000) != floor(now / 1000)) {
-        OscWiFi.send(HOST, PORT, "/hr", (int)(pulse != 0 ? 60 * 1000 / pulse : -1));
-      }
     }
+
+    OscWiFi.send(HOST, PORT, "/hr", (int)(pulse != 0 ? 60 * 1000 / pulse : -1));
   }
 
   if (prevMode != mode) {
