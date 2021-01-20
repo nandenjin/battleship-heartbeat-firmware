@@ -201,7 +201,7 @@ void loop() {
       OscWiFi.send(HOST, PORT, "/hr", (int)(pulse != 0 ? 60 * 1000 / pulse : -1));
     }
   } else if (mode == 2) {
-    if (lastPulse < now - 5000 || range_short < 300) {
+    if (lastPulse < now - 5000 || range_short < 100) {
       blink(now, 200, 400);
       beep(now, 880 * 4, 100, 2000, 0);
       beep(now, 880 * 1, 100, 2000, 300);
